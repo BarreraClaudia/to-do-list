@@ -1,7 +1,12 @@
 const express = require('express');
 const app = express();
-const todoRoutes = require('./src/routes/todo');
+const todoRoutes = require('./routes/todo');
 const port = process.env.PORT || 3000;
+
+// ========================
+// Middlewares
+// ========================
+app.set('view engine', 'ejs');
 
 app.use('/todo', todoRoutes);
 
