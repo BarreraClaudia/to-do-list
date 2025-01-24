@@ -5,8 +5,6 @@ const connectDB = require('./config/database');
 const mainRoutes = require('./routes/main');
 const todoRoutes = require('./routes/todo');
 
-const port = process.env.PORT || 3000;
-
 require('dotenv').config({ path: './config/.env' });
 
 connectDB();
@@ -21,6 +19,7 @@ app.use(express.json());
 app.use('/', mainRoutes);
 app.use('/todo', todoRoutes);
 
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
