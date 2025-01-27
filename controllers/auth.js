@@ -1,7 +1,6 @@
-const { User, validate } = require('../models/User');
-const bcrypt = require('bcrypt');
-const express = require('express');
-const router = express.Router();
+const { signupSchema } = require('../middlewares/validator');
+const User = require('../models/User');
+const { doHash } = require('../utils/hashing');
 
 exports.getSignup = (req, res) => {
   if (req.user) {
@@ -11,26 +10,43 @@ exports.getSignup = (req, res) => {
 };
 
 exports.postSignup = async (req, res) => {
-  //   const { error } = validate(req.body);
-  //   if (error) {
-  //     return res.status(400).send(error.details[0].message);
-  //   }
-  //   let user = await User.findOne({ email: req.body.email });
-  //   if (user) {
-  //     return res.status(400).send('User already exists. Please sign in');
-  //   } else {
-  //     try {
-  //       const salt = await bcrypt.genSalt(10);
-  //       const password = await bcrypt.hash(req.body.password, salt);
-  //       const user = new User({
-  //         userName: req.body.userName,
-  //         email: req.body.email,
-  //         password: password,
-  //       });
-  //       await user.save();
-  //       return res.status(201).json(user);
-  //     } catch (err) {
-  //       return res.status(400).json({ message: err.message });
-  //     }
-  //   }
+  //res.json({ message: 'Signup Successful' }); //check to make sure it works on postman
+
+  const { email, password } = req.body;
+  try {
+    const { error, value } = signupSchema.validate({ email, password });
+
+    if (error) {
+      return res
+        .status(401)
+        .json({ success: false, message: error.details[0].message });
+    }
+
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      return res
+        .status(401)
+        .json({ success: false, message: 'User already exists!' });
+    }
+
+    const hashedPassword = await doHash(password, 12);
+
+    const newUser = new User({
+      email,
+      password: hashedPassword,
+    });
+
+    const result = await newUser.save();
+
+    result.password = undefined;
+
+    res.status(201).json({
+      success: true,
+      message: 'Your account has been created successfully',
+      result,
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };

@@ -1,25 +1,30 @@
 const express = require('express');
-const app = express();
+const helmet = require('helmet');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+
 const mongoose = require('mongoose');
 const connectDB = require('./config/database');
+
 const mainRoutes = require('./routes/main');
 const todoRoutes = require('./routes/todo');
 
 require('dotenv').config({ path: './config/.env' });
 
-connectDB();
+const app = express();
 
-// ========================
-// Middlewares
-// ========================
+app.use(cors());
+app.use(helmet());
+app.use(cookieParser());
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+connectDB();
+
 app.use('/', mainRoutes);
 app.use('/todo', todoRoutes);
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+app.listen(process.env.PORT, () => {
+  console.log(`listening... ٩(｡•́‿•̀｡)۶`);
 });

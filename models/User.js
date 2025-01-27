@@ -1,47 +1,46 @@
 const mongoose = require('mongoose');
-// const Joi = require('joi');
 
 const UserSchema = new mongoose.Schema({
-  userName: { type: String, unique: true },
-  email: { type: String, unique: true },
-  password: String,
+  // userName: {
+  //   type: String,
+  //   required: [true, 'User name is required!'],
+  //   trim: true,
+  //   unique: [true, 'User name must be unique!'],
+  // },
+  email: {
+    type: String,
+    required: [true, 'Email is required!'],
+    trim: true,
+    unique: [true, 'Email must be unique!'],
+    minLength: [5, 'Email must have 5 characters!'],
+    lowercase: true,
+  },
+  password: {
+    type: String,
+    required: [true, 'Password must be provided!'],
+    trim: true,
+    select: false, //will not include password when we try to fetch the user from the database
+  },
+  verified: {
+    type: Boolean,
+    default: false,
+  },
+  verificationCode: {
+    type: String,
+    select: false,
+  },
+  verificationCodeValidation: {
+    type: Number,
+    select: false,
+  },
+  forgotPasswordCode: {
+    type: String,
+    select: false,
+  },
+  forgotPasswordCodeValidation: {
+    type: Number,
+    select: false,
+  },
 });
 
 module.exports = mongoose.model('User', UserSchema);
-
-//https://medium.com/@wanguiwawerub/user-registration-in-node-js-3e0ef7a61de7
-
-// const UserSchema = new mongoose.Schema({
-//   userName: {
-//     type: String,
-//     required: true,
-//     min: 3,
-//     max: 100,
-//   },
-//   email: {
-//     type: String,
-//     required: true,
-//     unique: true,
-//     min: 5,
-//     max: 255,
-//   },
-//   password: {
-//     type: String,
-//     required: true,
-//     min: 8,
-//     max: 100,
-//   },
-// });
-
-// function validateUser(user) {
-//   const schema = Joi.object({
-//     userName: Joi.string().min(3).max(100).required(),
-//     email: Joi.string().min(5).max(255).required().email(),
-//     password: Joi.string().min(8).max(100).required(),
-//   });
-//   return schema.validate(user);
-// }
-
-// const User = mongoose.model('User', userSchema);
-// module.exports.validate = validateUser;
-// module.exports.User = User;
