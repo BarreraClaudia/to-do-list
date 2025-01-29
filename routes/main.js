@@ -10,4 +10,10 @@ router.get('/login', authController.getLogin);
 router.post('/login', authController.postLogin);
 router.get('/logout', authController.logout);
 
+router.patch('/send-verification-code', authController.sendVerificationCode);
+router.patch(
+  '/verify-verification-code',
+  authController.verifyVerificationCode
+);
+
 module.exports = router;
